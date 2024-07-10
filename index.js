@@ -17,4 +17,24 @@ const createEmployeeRecords = (arrOfArrays) => {
     return arrOfArrays.map(createEmployeeRecord);
 };
 
-//
+// Function: createTimeInEvent
+const createTimeInEvent = (employee, timeStamp) => {
+    const timeIn = {
+        type: "TimeIn",
+        hour: parseInt(timeStamp.slice(-4)),
+        date: timeStamp.slice(0, 10)
+    };
+    employee.timeInEvents.push(timeIn);
+    return employee;
+};
+
+// Function: createTimeOutEvent
+const createTimeOutEvent = (employee, timeStamp) => {
+    const timeOut = {
+        type: "TimeOut",
+        hour: parseInt(timeStamp.slice(-4)),
+        date: timeStamp.slice(0, 10)
+    };
+    employee.timeOutEvents.push(timeOut);
+    return employee;
+};
