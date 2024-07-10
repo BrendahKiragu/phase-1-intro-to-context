@@ -10,3 +10,11 @@ const createEmployeeRecord = (arr) => {
         timeOutEvents: []
     };
 };
+
+//Converts each nested Array into an employee record
+// using createEmployeeRecord and accumulates it to a new Array
+const createEmployeeRecords = (arrOfArrays) => {
+    return arrOfArrays.map(createEmployeeRecord);
+};
+
+//
