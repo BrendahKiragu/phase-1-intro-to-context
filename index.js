@@ -14,7 +14,6 @@ let createEmployeeRecords = function(employeeRecordData) {
     return employeeRecordData.map((records) => createEmployeeRecord(records))
     }
 
-
     let createTimeInEvent = ((employeeRecord, dateStamp) => {
         let [date, hour] = dateStamp.split(' ')
 
