@@ -1,75 +1,75 @@
-//loads array elements to corresponding object properties
-//initializes empty arrays on 2 properties
-const createEmployeeRecord = (arr) => {
+function createEmployeeRecord(records){
     return {
-        firstName: arr[0],
-        familyName: arr[1],
-        title: arr[2],
-        payPerHour: arr[3],
+        firstName: records[0],
+        familyName:  records[1],
+        title: records[2],
+        payPerHour: records[3],
         timeInEvents: [],
-        timeOutEvents: []
-    };
-};
+        timeOutEvents: [],
+    }
 
-//Converts each nested Array into an employee record
-// using createEmployeeRecord and accumulates it to a new Array
-const createEmployeeRecords = (arrayOfArrays) => {
-    return arrayOfArrays.map(createEmployeeRecord);
-};
-
-//Adds an Object with keys to the timeInEvents Array on the record 
-const createTimeInEvent = (employee, timeStamp) => {
-    const timeIn = {
-        type: "TimeIn",
-        hour: parseInt(timeStamp.slice(-4)),
-        date: timeStamp.slice(0, 10)
-    };
-    employee.timeInEvents.push(timeIn);
-    return employee;
-};
-
-//Adds an Object with keys to the timeOutEvents Array on the record
-const createTimeOutEvent = (employee, timeStamp) => {
-    const timeOut = {
-        type: "TimeOut",
-        hour: parseInt(timeStamp.slice(-4)),
-        date: timeStamp.slice(0, 10)
-    };
-    employee.timeOutEvents.push(timeOut);
-    return employee;
-};
-
-//finds the number of hours elapsed between a given date timeInEvent and timeOutEvent
-const hoursWorkedOnDate = (employee, date)=> {
-   const { timeInEvents, timeOutEvents } = employee;
-
-    const timeInEvent = timeInEvents.find(event => event.date === date);
-    const timeOutEvent = timeOutEvents.find(event => event.date === date);
-
-    if (!timeInEvent || !timeOutEvent) {
-        throw new Error(`Missing time events for date: ${date}`);
-}
- const timeIn = timeInEvent.hour;
-    const timeOut = timeOutEvent.hour;
-
-    // Calculate hours worked
-    const hoursWorked = (timeOut - timeIn) / 100;
-    return hoursWorked;
 }
 
-// Function: wagesEarnedOnDate
-const wagesEarnedOnDate = (employee, date) => {
-    const hoursWorked = hoursWorkedOnDate(employee, date);
-    return hoursWorked * employee.payPerHour;
-};
+let createEmployeeRecords = function(employeeRecordData) {
+    return employeeRecordData.map((records) => createEmployeeRecord(records))
+    }
 
-// Function: allWagesFor
-const allWagesFor = (employee) => {
-    const datesWorked = employee.timeInEvents.map(event => event.date);
-    return datesWorked.reduce((totalWages, date) => totalWages + wagesEarnedOnDate(employee, date), 0);
-};
 
-// accumulates the value of all dates worked by an employee
-const calculatePayroll = (employees) => {
-    return employees.reduce((totalPayroll, employee) => totalPayroll + allWagesFor(employee), 0);
-};
+    let createTimeInEvent = ((employeeRecord, dateStamp) => {
+        let [date, hour] = dateStamp.split(' ')
+
+        employeeRecord.timeInEvents.push({
+            type: "TimeIn",
+            hour: parseInt(hour, 10),
+            date,
+        })
+
+        return employeeRecord
+    })
+
+    let createTimeOutEvent = ((employeeRecord, dateStamp) => {
+        let [date, hour] = dateStamp.split(' ')
+
+        employeeRecord.timeOutEvents.push({
+            type: "TimeOut",
+            hour: parseInt(hour, 10),
+            date,
+        })
+
+        return employeeRecord
+    })
+
+    let hoursWorkedOnDate = ((employeeRecord, dateFormat) => {
+        let inEvent = employeeRecord.timeInEvents.find((element) => {
+            return element.date === dateFormat
+        })
+
+        let outEvent = employeeRecord.timeOutEvents.find((element) => {
+            return element.date === dateFormat
+        })
+
+        return (outEvent.hour - inEvent.hour) / 100
+    })
+
+    let wagesEarnedOnDate = ((employeeRecord, dateFormat) => {
+        let wagesEarned = hoursWorkedOnDate(employeeRecord, dateFormat)
+            * employeeRecord.payPerHour
+        return parseFloat(wagesEarned.toString())
+    })
+
+    let allWagesFor = ((employeeRecord) =>{
+        let datesWorked = employeeRecord.timeInEvents.map((element) => {
+            return element.date
+        })
+
+        let payable = datesWorked.reduce((record, dates) => {
+            return record + wagesEarnedOnDate(employeeRecord, dates)
+        }, 0)
+
+        return payable
+    })  
+    let calculatePayroll = ((arrayOfEmployeeRecords) =>{
+        return arrayOfEmployeeRecords.reduce((space, record) => {
+            return space + allWagesFor(record)
+        }, 0)
+    })
